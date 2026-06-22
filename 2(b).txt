@@ -30,7 +30,7 @@ show collections
 
 // Valid Insert
 db.employees.insertOne({
-    name: "Noel",
+    name: "Rohan",
     salary: NumberInt(50000)
 })
 

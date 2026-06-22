@@ -1,0 +1,46 @@
+Hive Setup
+
+wsl
+
+cd ~/docker-hive
+
+docker compose up -d
+
+docker ps
+
+docker exec -it docker-hive-hive-server-1 bash
+
+hive
+
+
+Creating employee file:
+
+exit;(exiting hive will take you to ubuntu)
+
+cat > employee_data.txt << 'EOF'
+7369,SMITH,JOHNSON,CLERK,7902,1980-12-17,800,0,20
+7499,ALLEN,WILLIAMS,SALESMAN,7698,1981-02-20,1600,300,30
+7521,WARD,BROWN,SALESMAN,7698,1981-02-22,1250,500,30
+7566,JONES,DAVIS,MANAGER,7839,1981-04-02,2975,0,20
+7654,MARTIN,MILLER,SALESMAN,7698,1981-09-28,1250,1400,30
+7698,BLAKE,WILSON,MANAGER,7839,1981-05-01,2850,0,30
+7782,CLARK,MOORE,MANAGER,7839,1981-06-09,2450,0,10
+7788,SCOTT,TAYLOR,ANALYST,7566,1982-12-09,3000,0,20
+7839,KING,ANDERSON,PRESIDENT,0,1981-11-17,5000,0,10
+7844,TURNER,THOMAS,SALESMAN,7698,1981-09-08,1500,0,30
+7876,ADAMS,JACKSON,CLERK,7788,1983-01-12,1100,0,20
+7900,JAMES,WHITE,CLERK,7698,1981-12-03,950,0,30
+7902,FORD,HARRIS,ANALYST,7566,1981-12-03,3000,0,20
+7934,MILLER,MARTIN,CLERK,7782,1982-01-23,1300,0,10
+EOF
+
+find / -name employee_data.txt 2>/dev/null(in ubuntu to find path of file)
+
+hive
+
+docker cp \
+~/BigDataLab/employee_data.txt \
+docker-hive-hive-server-1:/opt/employee_data.txt
+
+LOAD DATA LOCAL INPATH '/opt/employee_data.txt'
+INTO TABLE mydb.employee;

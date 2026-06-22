@@ -1,0 +1,70 @@
+A = LOAD 'Airline_Delay_Cause_Cleaned.csv'
+USING PigStorage(',')
+AS (
+    airport:chararray,
+    carrier:chararray,
+    arr_flights:int,
+    arr_del15:int
+);
+
+-- Flights per carrier
+B = FOREACH A GENERATE carrier, arr_flights;
+C = GROUP B BY carrier;
+D = FOREACH C GENERATE
+        group AS carrier,
+        SUM(B.arr_flights) AS total_flights;
+
+E = ORDER D BY total_flights DESC;
+DUMP E;
+
+-- Airlines with >=10% delayed flights
+F = FOREACH A GENERATE
+        airport,
+        carrier,
+        (double)arr_del15/arr_flights AS delay_ratio,
+        arr_del15;
+
+G = FILTER F BY delay_ratio >= 0.10;
+
+H = GROUP G BY airport;
+
+I = FOREACH H GENERATE
+        group AS airport,
+        SUM(G.arr_del15) AS delayed_flights;
+
+DUMP I;
+
+-- Load airport dataset
+AP = LOAD 'airports.csv'
+USING PigStorage(',')
+AS (
+    airport:chararray,
+    icao:chararray
+);
+
+-- Join airport codes
+J = JOIN I BY airport, AP BY airport;
+
+K = FOREACH J GENERATE
+        I::airport,
+        AP::icao,
+        I::delayed_flights;
+
+L = ORDER K BY delayed_flights DESC;
+
+DUMP L;
+
+STORE E INTO 'output/carrier_stats';
+STORE I INTO 'output/delay_stats';
+STORE L INTO 'output/airport_icao';
+
+
+LOAD
+FOREACH ... GENERATE
+GROUP
+SUM / COUNT
+FILTER
+JOIN
+ORDER BY
+STORE
+DUMP

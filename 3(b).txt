@@ -1,0 +1,82 @@
+rm -rf metastore_db/
+
+schematool -initSchema -dbType derby
+
+hive
+
+--List all the databases
+SHOW DATABASES;
+
+--creating a db
+CREATE DATABASE mydb123;
+
+--deleting an existing db
+DROP DATABASE mydb123;
+
+--create and use a db
+CREATE DATABASE mydb;
+USE mydb;
+
+--List all the tables in selected database
+SHOW TABLES;
+
+--Create a Hive Managed table
+CREATE TABLE mydb.employee
+(
+empcode      INT,
+empfname     STRING,
+emplname     STRING,
+job          STRING,
+manager      STRING,
+hiredate     STRING,
+salary       INT,
+commission   INT,
+deptcode     INT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+;
+
+--(Manually)PLACE THE FILE employee_data.txt IN THE BELOW MENTIONED LOCAL DIRECTORY.
+
+--EXECUTE LOAD COMMAND
+LOAD DATA LOCAL INPATH '/opt/employee_data.txt'
+INTO TABLE mydb.employee;
+
+--List all the records in a table
+SELECT * FROM mydb.employee;
+
+--(Manually)Check if the data in employee_data.txt (/home) matches with employee_data.txt (hive warehouse directory).
+
+--Get the Table definition
+SHOW CREATE TABLE mydb.employee; --find hive warehouse directory location
+
+--Get the table structure
+DESCRIBE mydb.employee;
+
+--Insert into an existing table
+INSERT INTO mydb.employee
+VALUES (9861,'JENNIFER','HUETTE','ANALYST',7839,'1996-07-01',5000,100,50);
+
+SELECT * FROM mydb.employee; -- to check if record got inserted.
+
+--(Manually)Check if the record is visible in a separate newly created file under table directory on hdfs (inside hive warehouse directory).
+
+--SELECT WHERE
+--Display the FULL NAME and SALARY drawn by an analyst working in dept no 20
+SELECT empfname||" "||emplname AS empfullname, salary
+FROM mydb.employee
+WHERE job = 'ANALYST' AND deptcode = 20;
+
+--SELECT ORDER BY
+--Display all the MANAGERS in order where the one who served the most appears first.
+SELECT empfname||" "||emplname AS empfullname, hiredate
+FROM mydb.employee
+WHERE job = 'MANAGER'
+ORDER BY hiredate asc;
+
+--SELECT GROUP BY
+--Prepare a list of all the jobs and their respective number of employees working for that job.
+SELECT job, COUNT(empfname)
+FROM mydb.employee
+GROUP BY job;

@@ -1,0 +1,50 @@
+# Enter NameNode Container
+docker exec -it namenode bash
+
+# Create HDFS Directories
+hdfs dfs -mkdir /user
+hdfs dfs -mkdir /user/rohan
+hdfs dfs -mkdir /user/rohan/hdfstest
+
+# Verify Directories
+hdfs dfs -ls /user
+hdfs dfs -ls /user/rohan
+
+# Create Local File
+echo "Hello Hadoop" > sample.txt
+cat sample.txt
+
+# Upload File to HDFS
+hdfs dfs -put sample.txt /user/rohan/hdfstest
+
+# Verify Upload
+hdfs dfs -ls /user/rohan/hdfstest
+
+# Read File from HDFS
+hdfs dfs -cat /user/rohan/hdfstest/sample.txt
+
+# Download File
+mkdir download
+hdfs dfs -get /user/rohan/hdfstest/sample.txt download/
+
+# Rename File
+hdfs dfs -mv /user/rohan/hdfstest/sample.txt \
+/user/rohan/hdfstest/sample_renamed.txt
+
+# Verify Rename
+hdfs dfs -ls /user/rohan/hdfstest
+
+# Delete File
+hdfs dfs -rm /user/rohan/hdfstest/sample_renamed.txt
+
+# Verify Deletion
+hdfs dfs -ls /user/rohan/hdfstest
+
+# Check Disk Usage
+hdfs dfs -du -h /user/rohan
+
+# Count Files and Directories
+hdfs dfs -count /user/rohan
+
+# Check HDFS Capacity
+hdfs dfs -df -h

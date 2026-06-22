@@ -1,0 +1,81 @@
+// Start MongoDB Container
+docker start mongodb
+
+// Open Mongo Shell
+docker exec -it mongodb mongosh
+
+// Create / Switch Database
+use companydb
+
+// Create Collection with Validation
+db.createCollection("employees", {
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: ["name", "salary"],
+            properties: {
+                name: {
+                    bsonType: "string"
+                },
+                salary: {
+                    bsonType: "int"
+                }
+            }
+        }
+    }
+})
+
+// Show Collections
+show collections
+
+// Valid Insert
+db.employees.insertOne({
+    name: "Noel",
+    salary: NumberInt(50000)
+})
+
+// Verify Insert
+db.employees.find()
+
+// Invalid Insert (Missing Salary)
+db.employees.insertOne({
+    name: "John"
+})
+
+// Invalid Insert (Wrong Data Type)
+db.employees.insertOne({
+    name: "Alice",
+    salary: "50000"
+})
+
+// Valid Insert
+db.employees.insertOne({
+    name: "Bob",
+    salary: NumberInt(75000)
+})
+
+// View All Documents
+db.employees.find()
+
+// Update Employee
+db.employees.updateOne(
+    { name: "Bob" },
+    { $set: { salary: NumberInt(80000) } }
+)
+
+// Verify Update
+db.employees.find()
+
+// Delete Employee
+db.employees.deleteOne({
+    name: "Bob"
+})
+
+// Verify Deletion
+db.employees.find()
+
+// Show Databases
+show dbs
+
+// Exit Mongo Shell
+exit

@@ -1,0 +1,92 @@
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.appName("IrisRDD").master("local[*]").getOrCreate()
+sc = spark.sparkContext
+
+data = [
+    "5.1,3.5,1.4,0.2,setosa",
+    "4.9,3.0,1.4,0.2,setosa",
+    "7.0,3.2,4.7,1.4,versicolor",
+    "6.4,3.2,4.5,1.5,versicolor",
+    "6.3,3.3,6.0,2.5,virginica",
+    "5.8,2.7,5.1,1.9,virginica"
+]
+
+rdd = sc.parallelize(data)
+
+print("Count:", rdd.count())
+
+species = rdd.map(lambda x: x.split(",")[4])
+print("Species:", species.collect())
+
+print("Petal Length > 5:")
+print(rdd.filter(lambda x: float(x.split(",")[2]) > 5).collect())
+
+print("FlatMap:")
+print(rdd.flatMap(lambda x: x.split(",")).take(20))
+
+pair = rdd.map(lambda x: (x.split(",")[4], 1))
+print("Species Count:")
+print(pair.reduceByKey(lambda a,b: a+b).collect())
+
+avg = rdd.map(lambda x: (
+    x.split(",")[4],
+    (float(x.split(",")[0]), 1)
+)).reduceByKey(
+    lambda a,b: (a[0]+b[0], a[1]+b[1])
+).mapValues(lambda x: round(x[0]/x[1],2))
+
+print("Avg Sepal Length:")
+print(avg.collect())
+
+print("Max Petal Length:")
+print(
+    rdd.map(lambda x: (x.split(",")[4], float(x.split(",")[2])))
+       .reduceByKey(max)
+       .collect()
+)
+
+print("Min Sepal Width:")
+print(
+    rdd.map(lambda x: (x.split(",")[4], float(x.split(",")[1])))
+       .reduceByKey(min)
+       .collect()
+)
+
+print("Distinct Species:")
+print(species.distinct().collect())
+
+spark.stop()
+
+
+
+Even Better for Exam Memory
+
+Remember only these patterns:
+
+# MAP
+rdd.map(lambda x: ...)
+
+# FILTER
+rdd.filter(lambda x: condition)
+
+# FLATMAP
+rdd.flatMap(lambda x: ...)
+
+# PAIR RDD
+rdd.map(lambda x: (key, value))
+
+# COUNT BY KEY
+reduceByKey(lambda a,b: a+b)
+
+# MAX/MIN BY KEY
+reduceByKey(max)
+reduceByKey(min)
+
+# AVERAGE BY KEY
+(key,(value,1))
+reduceByKey(lambda a,b:(a[0]+b[0],a[1]+b[1]))
+mapValues(lambda x:x[0]/x[1])
+
+# DISTINCT
+distinct()

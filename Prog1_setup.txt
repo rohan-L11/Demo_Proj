@@ -1,0 +1,15 @@
+Hadoop and docker startup:
+Start Docker Desktop.
+wsl(enter ubuntu)
+cd ~/docker-hadoop
+docker compose up -d
+docker ps
+docker exec -it namenode bash
+
+To close:
+exit
+docker compose down
+exit(out of ubuntu)
+
+Checks:
+docker ps -a

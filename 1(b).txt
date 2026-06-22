@@ -1,0 +1,36 @@
+# Enter NameNode Container
+docker exec -it namenode bash
+
+# Create Input File
+echo "hadoop spark hive hadoop" > input.txt
+echo "spark hive" >> input.txt
+
+# Verify File Content
+cat input.txt
+
+# Create HDFS Input Directory
+hdfs dfs -mkdir /input
+
+# Upload File to HDFS
+hdfs dfs -put input.txt /input
+
+# Verify Upload
+hdfs dfs -ls /input
+hdfs dfs -cat /input/input.txt
+
+# Run MapReduce WordCount Program
+hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.2.1.jar \
+wordcount /input /output_wc
+
+# Check Output Directory
+hdfs dfs -ls /output_wc
+
+# View WordCount Result
+hdfs dfs -cat /output_wc/part-r-00000
+
+# If Output Directory Already Exists
+hdfs dfs -rm -r /output_wc
+
+# Re-run WordCount Job
+hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.2.1.jar \
+wordcount /input /output_wc

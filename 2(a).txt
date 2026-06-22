@@ -1,0 +1,126 @@
+// Start MongoDB Container
+docker start mongodb
+
+// Open Mongo Shell
+docker exec -it mongodb mongosh
+
+// Show Databases
+show dbs
+
+// Create / Switch Database
+use studentdb
+
+// Check Current Database
+db
+
+// Show Collections
+show collections
+
+// Insert One Document
+db.students.insertOne({
+    name: "Rohan",
+    usn: "1RV22CS001",
+    branch: "CSE"
+})
+
+// Insert Multiple Documents
+db.students.insertMany([
+    {
+        name: "John",
+        usn: "1RV22CS002",
+        branch: "ISE"
+    },
+    {
+        name: "Alice",
+        usn: "1RV22CS003",
+        branch: "ECE"
+    }
+])
+
+// View All Documents
+db.students.find()
+
+// Pretty Output
+db.students.find().pretty()
+
+// Find One Document
+db.students.findOne()
+
+// Filter Documents
+db.students.find({
+    branch: "CSE"
+})
+
+// Multiple Conditions
+db.students.find({
+    branch: "CSE",
+    name: "Rohan"
+})
+
+// Update One Document
+db.students.updateOne(
+    { name: "Rohan" },
+    { $set: { branch: "DS" } }
+)
+
+// Update Many Documents
+db.students.updateMany(
+    { branch: "ISE" },
+    { $set: { branch: "AIML" } }
+)
+
+// Verify Updates
+db.students.find()
+
+// Delete One Document
+db.students.deleteOne({
+    name: "John"
+})
+
+// Delete Many Documents
+db.students.deleteMany({
+    branch: "ECE"
+})
+
+// Verify Deletions
+db.students.find()
+
+// Count Documents
+db.students.countDocuments()
+
+// Sort Ascending
+db.students.find().sort({
+    name: 1
+})
+
+// Sort Descending
+db.students.find().sort({
+    name: -1
+})
+
+// Limit Results
+db.students.find().limit(2)
+
+// Skip Results
+db.students.find().skip(1)
+
+// Show Selected Fields
+db.students.find(
+    {},
+    {
+        name: 1,
+        branch: 1
+    }
+)
+
+// Show Collections
+show collections
+
+// Drop Collection
+db.students.drop()
+
+// Drop Database
+db.dropDatabase()
+
+// Exit Mongo Shell
+exit

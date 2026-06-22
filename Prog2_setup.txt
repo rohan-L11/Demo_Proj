@@ -1,0 +1,13 @@
+MongoDb docker setup:
+docker start mongodb
+docker ps
+docker exec -it mongodb mongosh
+
+docker stop mongodb
+docker rm -f mongodb
+
+First time: docker run -d \
+--name mongodb \
+-p 27017:27017 \
+-v mongo_data:/data/db \
+mongo
